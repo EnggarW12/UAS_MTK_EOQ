@@ -67,7 +67,7 @@ if st.button("🔍 Hitung EOQ"):
     # Buat DataFrame untuk ekspor
     df = pd.DataFrame({
         'Order Quantity (Q)': Q,
-        'Total Cost (Rp)': total_cost,
+        'Total Cost (Rp)': total_cost.round(0).astype(int),
         'Biaya Pemesanan (Rp)': biaya_pemesanan,
         'Biaya Penyimpanan (Rp)': biaya_penyimpanan
     })
