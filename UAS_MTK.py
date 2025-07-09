@@ -9,6 +9,24 @@ st.set_page_config(page_title="EOQ – Economic Order Quantity", layout="centere
 # Judul Aplikasi
 st.title("📦 EOQ – Economic Order Quantity")
 
+# Penjelasan EOQ
+st.markdown("""
+**Economic Order Quantity (EOQ)** adalah jumlah pembelian optimal yang meminimalkan total biaya persediaan, yaitu **biaya pemesanan** dan **biaya penyimpanan**.
+
+Rumus EOQ:
+
+\\[
+EOQ = \\sqrt{\\frac{2DS}{H}}
+\\]
+
+Keterangan:
+- \\( D \\): Permintaan tahunan (unit per tahun)  
+- \\( S \\): Biaya pemesanan per order (Rp)  
+- \\( H \\): Biaya penyimpanan per unit per tahun (Rp)
+
+Aplikasi ini akan menghitung EOQ berdasarkan input Anda dan menampilkan grafik hubungan antara kuantitas pemesanan dan total biaya.
+""")
+
 # Input pengguna
 D = st.number_input("Permintaan Tahunan (unit)", value=1000)
 S = st.number_input("Biaya Pemesanan per Order (Rp)", value=50000)
