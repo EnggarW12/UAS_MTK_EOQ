@@ -10,11 +10,11 @@ st.set_page_config(page_title="EOQ – Economic Order Quantity", layout="centere
 # Judul Aplikasi
 st.title("📦 EOQ – Economic Order Quantity")
 
-# Penjelasan EOQ
+# Penjelasan EOQ + Rumus dengan LaTeX yang benar
 st.markdown(r"""
 **Economic Order Quantity (EOQ)** adalah jumlah pembelian optimal yang meminimalkan total biaya persediaan, yaitu **biaya pemesanan** dan **biaya penyimpanan**.
 
-Rumus EOQ:
+**Rumus EOQ:**
 
 \[
 EOQ = \sqrt{\frac{2DS}{H}}
@@ -47,7 +47,7 @@ if st.button("🔍 Hitung EOQ"):
 
     # Tampilkan grafik
     plt.figure(figsize=(8, 5))
-    plt.plot(Q, total_cost, label='Total Biaya', color='blue')
+    plt.plot(Q, total_cost, label='Total Biaya (Rp)', color='blue')
     plt.axvline(EOQ, color='red', linestyle='--', label=f'EOQ = {EOQ:.2f}')
     plt.xlabel("Kuantitas Order (Q)")
     plt.ylabel("Total Biaya (Rp)")
@@ -65,7 +65,7 @@ if st.button("🔍 Hitung EOQ"):
         'Biaya Penyimpanan (Rp)': biaya_penyimpanan
     })
 
-    # Convert ke CSV pakai titik koma
+    # Convert ke CSV pakai titik koma biar Excel Indonesia bisa langsung buka
     csv = df.to_csv(index=False, sep=';').encode('utf-8')
     st.download_button(
         label="⬇️ Download Hasil dalam CSV (Excel Friendly)",
