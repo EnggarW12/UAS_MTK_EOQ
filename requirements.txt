@@ -1,6 +1,6 @@
 streamlit
-sympy
 numpy
-matplotlib
 pandas
+matplotlib
+openpyxl
 Pillow
