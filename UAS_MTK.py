@@ -71,7 +71,7 @@ if st.button("🔍 Hitung EOQ"):
     })
 
     # Export ke CSV dengan separator titik koma (Excel-friendly)
-    csv = df.to_csv(index=False, sep=';').encode('utf-8')
+    csv = df.to_csv(index=False, sep=',').encode('utf-8')
     st.download_button(
         label="⬇️ Download Hasil dalam CSV (Excel Friendly)",
         data=csv,
