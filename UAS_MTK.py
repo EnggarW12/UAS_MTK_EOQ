@@ -4,6 +4,8 @@ from math import sqrt
 import matplotlib.pyplot as plt
 import pandas as pd
 from PIL import Image
+from io import BytesIO
+from openpyxl import Workbook
 
 # Konfigurasi halaman
 st.set_page_config(page_title="EOQ – Economic Order Quantity", layout="centered")
@@ -45,7 +47,7 @@ if st.button("🔍 Hitung EOQ"):
     st.success(f"EOQ Optimal: {EOQ:.2f} unit")
 
     # Buat range Q dan hitung biaya
-    Q = np.linspace(1, 2 * EOQ, 30)
+    Q = np.linspace(1, 2 * EOQ, 500)
     biaya_pemesanan = (D / Q) * S
     biaya_penyimpanan = (Q / 2) * H
     total_cost = biaya_pemesanan + biaya_penyimpanan
@@ -70,13 +72,29 @@ if st.button("🔍 Hitung EOQ"):
         'Biaya Penyimpanan (Rp)': biaya_penyimpanan
     })
 
-    # Export ke CSV dengan separator titik koma (Excel-friendly)
-    csv = df.to_csv(index=False, sep=';').encode('utf-8')
+    # Export ke Excel .xlsx
+    output = BytesIO()
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Hasil EOQ"
+
+    # Header
+    ws.append(list(df.columns))
+
+    # Data rows
+    for row in df.itertuples(index=False):
+        ws.append(row)
+
+    # Simpan ke file in-memory
+    wb.save(output)
+    output.seek(0)
+
+    # Tombol download Excel
     st.download_button(
-        label="⬇️ Download Hasil dalam CSV (Excel Friendly)",
-        data=csv,
-        file_name='hasil_perhitungan_eoq.csv',
-        mime='text/csv'
+        label="⬇️ Download Hasil dalam Excel (.xlsx)",
+        data=output,
+        file_name='hasil_perhitungan_eoq.xlsx',
+        mime='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
     )
 
     st.info(f"Semakin dekat kuantitas ke {EOQ:.2f}, semakin optimal total biaya persediaan.")
