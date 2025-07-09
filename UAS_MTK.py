@@ -16,12 +16,12 @@ st.markdown("""
 **Economic Order Quantity (EOQ)** adalah jumlah pembelian optimal yang meminimalkan total biaya persediaan, yaitu **biaya pemesanan** dan **biaya penyimpanan**.
 """)
 
-# Gambar rumus EOQ (tajam, tidak blur)
+# Gambar rumus EOQ
 st.subheader("📐 Rumus EOQ")
 st.image(
     "https://latex.codecogs.com/png.image?\\dpi{300}&space;EOQ%20=%20\\sqrt{\\frac{2DS}{H}}",
     caption="Rumus EOQ: Economic Order Quantity",
-    width=280  # Ukuran tetap agar tidak blur
+    width=280
 )
 
 st.markdown("""
@@ -30,30 +30,41 @@ Keterangan:
 - **S**: Biaya pemesanan per order (Rp)  
 - **H**: Biaya penyimpanan per unit per tahun (Rp)
 
-Aplikasi ini akan menghitung EOQ berdasarkan input Anda dan menampilkan grafik serta memungkinkan ekspor hasil.
+Masukkan nilai numerik tanpa titik pemisah ribuan. Contoh: `8000`, bukan `8.000`.
 """)
 
-# Input pengguna
+# Input pengguna (FIXED: pakai number_input agar tidak salah ribuan)
 st.subheader("📝 Input Parameter")
-D = st.slider("Permintaan Tahunan (D)", min_value=100, max_value=10000, value=1000, step=100)
-S = st.slider("Biaya Pemesanan per Order (S)", min_value=1000, max_value=100000, value=50000, step=1000)
-H = st.slider("Biaya Penyimpanan per Unit per Tahun (H)", min_value=100, max_value=10000, value=2000, step=100)
+D = st.number_input("Permintaan Tahunan (D)", value=8000, min_value=1)
+S = st.number_input("Biaya Pemesanan per Order (S)", value=20000, min_value=1)
+H = st.number_input("Biaya Penyimpanan per Unit per Tahun (H)", value=4000, min_value=1)
 
 # Tombol hitung EOQ
 if st.button("🔍 Hitung EOQ"):
     EOQ = sqrt((2 * D * S) / H)
     st.success(f"EOQ Optimal: {EOQ:.2f} unit")
 
+    # Debug nilai input
+    st.write(f"📌 Dibaca oleh sistem: D = {D}, S = {S}, H = {H}")
+
     # Buat range Q dan hitung biaya
-    Q = np.linspace(1, 2 * EOQ, 30)
+    Q = np.linspace(1, 2 * EOQ, 500)
     biaya_pemesanan = (D / Q) * S
     biaya_penyimpanan = (Q / 2) * H
     total_cost = biaya_pemesanan + biaya_penyimpanan
 
-    # Tampilkan grafik
+    # EOQ optimal dari simulasi
+    min_index = np.argmin(total_cost)
+    best_Q = Q[min_index]
+    min_cost = total_cost[min_index]
+
+    st.info(f"💡 EOQ terbaik hasil simulasi: {best_Q:.2f} unit")
+    st.info(f"💰 Total biaya minimum: Rp {min_cost:,.0f}")
+
+    # Grafik
     plt.figure(figsize=(8, 5))
     plt.plot(Q, total_cost, label='Total Biaya (Rp)', color='blue')
-    plt.axvline(EOQ, color='red', linestyle='--', label=f'EOQ = {EOQ:.2f}')
+    plt.axvline(best_Q, color='red', linestyle='--', label=f'EOQ Optimal = {best_Q:.2f}')
     plt.xlabel("Kuantitas Order (Q)")
     plt.ylabel("Total Biaya (Rp)")
     plt.title("📊 Total Biaya vs Kuantitas Order")
@@ -62,7 +73,7 @@ if st.button("🔍 Hitung EOQ"):
     plt.tight_layout()
     st.pyplot(plt.gcf())
 
-    # Buat DataFrame untuk ekspor
+    # Tabel ke DataFrame
     df = pd.DataFrame({
         'Order Quantity (Q)': Q,
         'Total Cost (Rp)': total_cost,
@@ -70,7 +81,7 @@ if st.button("🔍 Hitung EOQ"):
         'Biaya Penyimpanan (Rp)': biaya_penyimpanan
     })
 
-    # Export ke CSV dengan separator titik koma (Excel-friendly)
+    # Export CSV
     csv = df.to_csv(index=False, sep=';').encode('utf-8')
     st.download_button(
         label="⬇️ Download Hasil dalam CSV (Excel Friendly)",
@@ -78,5 +89,3 @@ if st.button("🔍 Hitung EOQ"):
         file_name='hasil_perhitungan_eoq.csv',
         mime='text/csv'
     )
-
-    st.info(f"Semakin dekat kuantitas ke {EOQ:.2f}, semakin optimal total biaya persediaan.")
