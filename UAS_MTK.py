@@ -3,6 +3,7 @@ import numpy as np
 from math import sqrt
 import matplotlib.pyplot as plt
 import pandas as pd
+from PIL import Image
 
 # Konfigurasi halaman
 st.set_page_config(page_title="EOQ – Economic Order Quantity", layout="centered")
@@ -10,20 +11,24 @@ st.set_page_config(page_title="EOQ – Economic Order Quantity", layout="centere
 # Judul Aplikasi
 st.title("📦 EOQ – Economic Order Quantity")
 
-# Penjelasan EOQ + Rumus dengan LaTeX yang benar
-st.markdown(r"""
+# Penjelasan EOQ
+st.markdown("""
 **Economic Order Quantity (EOQ)** adalah jumlah pembelian optimal yang meminimalkan total biaya persediaan, yaitu **biaya pemesanan** dan **biaya penyimpanan**.
+""")
 
-**Rumus EOQ:**
+# Tampilkan gambar rumus EOQ dari URL
+st.subheader("📐 Rumus EOQ")
+st.image(
+    "https://latex.codecogs.com/png.image?\\dpi{150}&space;EOQ%20=%20\\sqrt{\\frac{2DS}{H}}",
+    caption="Rumus EOQ: Economic Order Quantity",
+    use_column_width=False
+)
 
-\[
-EOQ = \sqrt{\frac{2DS}{H}}
-\]
-
+st.markdown("""
 Keterangan:
-- \( D \): Permintaan tahunan (unit per tahun)  
-- \( S \): Biaya pemesanan per order (Rp)  
-- \( H \): Biaya penyimpanan per unit per tahun (Rp)
+- **D**: Permintaan tahunan (unit per tahun)  
+- **S**: Biaya pemesanan per order (Rp)  
+- **H**: Biaya penyimpanan per unit per tahun (Rp)
 
 Aplikasi ini akan menghitung EOQ berdasarkan input Anda dan menampilkan grafik serta memungkinkan ekspor hasil.
 """)
@@ -65,7 +70,7 @@ if st.button("🔍 Hitung EOQ"):
         'Biaya Penyimpanan (Rp)': biaya_penyimpanan
     })
 
-    # Convert ke CSV pakai titik koma biar Excel Indonesia bisa langsung buka
+    # Export CSV pakai separator titik koma
     csv = df.to_csv(index=False, sep=';').encode('utf-8')
     st.download_button(
         label="⬇️ Download Hasil dalam CSV (Excel Friendly)",
