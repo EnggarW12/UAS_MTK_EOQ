@@ -65,10 +65,10 @@ if st.button("🔍 Hitung EOQ"):
         'Biaya Penyimpanan (Rp)': biaya_penyimpanan
     })
 
-    # Convert ke CSV
-   csv = df.to_csv(index=False, sep=';').encode('utf-8')
+    # Convert ke CSV pakai titik koma
+    csv = df.to_csv(index=False, sep=';').encode('utf-8')
     st.download_button(
-        label="⬇️ Download Hasil dalam CSV",
+        label="⬇️ Download Hasil dalam CSV (Excel Friendly)",
         data=csv,
         file_name='hasil_perhitungan_eoq.csv',
         mime='text/csv'
