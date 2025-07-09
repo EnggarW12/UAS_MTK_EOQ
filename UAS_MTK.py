@@ -45,7 +45,7 @@ if st.button("🔍 Hitung EOQ"):
     st.success(f"EOQ Optimal: {EOQ:.2f} unit")
 
     # Buat range Q dan hitung biaya
-    Q = np.linspace(1, 2 * EOQ, 100)
+    Q = np.linspace(1, 2 * EOQ, 20)
     biaya_pemesanan = (D / Q) * S
     biaya_penyimpanan = (Q / 2) * H
     total_cost = biaya_pemesanan + biaya_penyimpanan
