@@ -66,7 +66,7 @@ if st.button("🔍 Hitung EOQ"):
     })
 
     # Convert ke CSV
-    csv = df.to_csv(index=False).encode('utf-8')
+   csv = df.to_csv(index=False, sep=';').encode('utf-8')
     st.download_button(
         label="⬇️ Download Hasil dalam CSV",
         data=csv,
