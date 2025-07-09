@@ -39,27 +39,33 @@ if st.button("🔍 Hitung EOQ"):
     EOQ = sqrt((2 * D * S) / H)
     st.success(f"EOQ Optimal: {EOQ:.2f} unit")
 
-    # Buat grafik
+    # Buat range Q dan hitung biaya
     Q = np.linspace(1, 2 * EOQ, 500)
-    total_cost = (D / Q) * S + (Q / 2) * H
+    biaya_pemesanan = (D / Q) * S
+    biaya_penyimpanan = (Q / 2) * H
+    total_cost = biaya_pemesanan + biaya_penyimpanan
 
+    # Tampilkan grafik
     plt.figure(figsize=(8, 5))
-    plt.plot(Q, total_cost, label='Total Biaya (Rp)', color='blue')
+    plt.plot(Q, total_cost, label='Total Biaya', color='blue')
     plt.axvline(EOQ, color='red', linestyle='--', label=f'EOQ = {EOQ:.2f}')
-    plt.title("📊 Total Biaya vs Kuantitas Order")
     plt.xlabel("Kuantitas Order (Q)")
     plt.ylabel("Total Biaya (Rp)")
+    plt.title("📊 Total Biaya vs Kuantitas Order")
     plt.grid(True)
     plt.legend()
     plt.tight_layout()
     st.pyplot(plt.gcf())
 
-    # Export ke CSV
+    # Buat DataFrame untuk ekspor
     df = pd.DataFrame({
         'Order Quantity (Q)': Q,
-        'Total Cost (Rp)': total_cost
+        'Total Cost (Rp)': total_cost,
+        'Biaya Pemesanan (Rp)': biaya_pemesanan,
+        'Biaya Penyimpanan (Rp)': biaya_penyimpanan
     })
 
+    # Convert ke CSV
     csv = df.to_csv(index=False).encode('utf-8')
     st.download_button(
         label="⬇️ Download Hasil dalam CSV",
