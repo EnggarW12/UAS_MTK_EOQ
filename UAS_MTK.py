@@ -16,12 +16,12 @@ st.markdown("""
 **Economic Order Quantity (EOQ)** adalah jumlah pembelian optimal yang meminimalkan total biaya persediaan, yaitu **biaya pemesanan** dan **biaya penyimpanan**.
 """)
 
-# Tampilkan gambar rumus EOQ dari URL
+# Gambar rumus EOQ dari URL, pakai use_container_width (yang baru)
 st.subheader("📐 Rumus EOQ")
 st.image(
     "https://latex.codecogs.com/png.image?\\dpi{150}&space;EOQ%20=%20\\sqrt{\\frac{2DS}{H}}",
     caption="Rumus EOQ: Economic Order Quantity",
-    use_column_width=False
+    use_container_width=True
 )
 
 st.markdown("""
@@ -70,7 +70,7 @@ if st.button("🔍 Hitung EOQ"):
         'Biaya Penyimpanan (Rp)': biaya_penyimpanan
     })
 
-    # Export CSV pakai separator titik koma
+    # Export ke CSV dengan pemisah titik koma (biar Excel langsung bisa baca)
     csv = df.to_csv(index=False, sep=';').encode('utf-8')
     st.download_button(
         label="⬇️ Download Hasil dalam CSV (Excel Friendly)",
@@ -79,5 +79,4 @@ if st.button("🔍 Hitung EOQ"):
         mime='text/csv'
     )
 
-    # Info tambahan
     st.info(f"Semakin dekat kuantitas ke {EOQ:.2f}, semakin optimal total biaya persediaan.")
