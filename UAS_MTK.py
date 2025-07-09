@@ -10,14 +10,15 @@ st.set_page_config(page_title="EOQ – Economic Order Quantity", layout="centere
 st.title("📦 EOQ – Economic Order Quantity")
 
 # Penjelasan EOQ
-st.markdown("""
+st.markdown(r"""
 **Economic Order Quantity (EOQ)** adalah jumlah pembelian optimal yang meminimalkan total biaya persediaan, yaitu **biaya pemesanan** dan **biaya penyimpanan**.
 
 Rumus EOQ:
 
-\\[
-EOQ = \\sqrt{\\frac{2DS}{H}}
-\\]
+\[
+EOQ = \sqrt{\frac{2DS}{H}}
+\]
+""")
 
 Keterangan:
 - \\( D \\): Permintaan tahunan (unit per tahun)  
