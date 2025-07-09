@@ -18,12 +18,11 @@ Rumus EOQ:
 \[
 EOQ = \sqrt{\frac{2DS}{H}}
 \]
-""")
 
 Keterangan:
-- \\( D \\): Permintaan tahunan (unit per tahun)  
-- \\( S \\): Biaya pemesanan per order (Rp)  
-- \\( H \\): Biaya penyimpanan per unit per tahun (Rp)
+- \( D \): Permintaan tahunan (unit per tahun)  
+- \( S \): Biaya pemesanan per order (Rp)  
+- \( H \): Biaya penyimpanan per unit per tahun (Rp)
 
 Aplikasi ini akan menghitung EOQ berdasarkan input Anda dan menampilkan grafik hubungan antara kuantitas pemesanan dan total biaya.
 """)
@@ -38,15 +37,19 @@ if st.button("Hitung EOQ"):
     EOQ = sqrt((2 * D * S) / H)
     st.success(f"EOQ: {EOQ:.2f} unit")
 
-    # Grafik Total Cost
+    # Grafik Total Biaya
     Q = np.linspace(1, 2 * EOQ, 500)
-    TC = (D / Q) * S + (Q / 2) * H
+    total_cost = (D / Q) * S + (Q / 2) * H
 
-    plt.figure()
-    plt.plot(Q, TC, label='Total Cost')
-    plt.axvline(EOQ, color='r', linestyle='--', label=f'EOQ = {EOQ:.2f}')
-    plt.title("Total Biaya vs. Kuantitas Order")
-    plt.xlabel("Order Quantity (Q)")
+    plt.figure(figsize=(8, 5))
+    plt.plot(Q, total_cost, label='Total Biaya', color='blue')
+    plt.axvline(EOQ, color='red', linestyle='--', label=f'EOQ = {EOQ:.2f}')
+    plt.title("Total Biaya vs Kuantitas Order")
+    plt.xlabel("Kuantitas Order (Q)")
     plt.ylabel("Total Biaya (Rp)")
+    plt.grid(True)
     plt.legend()
-    st.pyplot(plt)
+    plt.tight_layout()
+
+    # Tampilkan grafik
+    st.pyplot(plt.gcf())
