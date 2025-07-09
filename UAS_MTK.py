@@ -3,47 +3,66 @@ import numpy as np
 from math import sqrt
 import matplotlib.pyplot as plt
 import pandas as pd
-from io import BytesIO
-from openpyxl import Workbook
-from openpyxl.styles import PatternFill
-from openpyxl.chart import LineChart, Reference
+from PIL import Image
 
 # Konfigurasi halaman
-st.set_page_config(page_title="EOQ – Debug Mode", layout="centered")
+st.set_page_config(page_title="EOQ – Economic Order Quantity", layout="centered")
 
-# Judul
-st.title("🛠️ EOQ Debug Tool")
+# Judul Aplikasi
+st.title("📦 EOQ – Economic Order Quantity")
 
-st.markdown("Masukkan nilai-nilai yang masuk akal (contoh: D=8000, S=20000, H=4000)")
+# Penjelasan EOQ
+st.markdown("""
+**Economic Order Quantity (EOQ)** adalah jumlah pembelian optimal yang meminimalkan total biaya persediaan, yaitu **biaya pemesanan** dan **biaya penyimpanan**.
+""")
 
-# Input
-D = st.number_input("Permintaan Tahunan (D)", min_value=1, value=8000)
-S = st.number_input("Biaya Pemesanan per Order (S)", min_value=1, value=20000)
-H = st.number_input("Biaya Penyimpanan per Unit per Tahun (H)", min_value=1, value=4000)
+# Gambar rumus EOQ (tajam, tidak blur)
+st.subheader("📐 Rumus EOQ")
+st.image(
+    "https://latex.codecogs.com/png.image?\\dpi{300}&space;EOQ%20=%20\\sqrt{\\frac{2DS}{H}}",
+    caption="Rumus EOQ: Economic Order Quantity",
+    width=280  # Ukuran tetap agar tidak blur
+)
 
-# Validasi angka agar tidak salah input titik/koma
-if D > 1e6 or S > 1e6 or H > 1e6:
-    st.warning("⚠️ Nilai input terlalu besar. Periksa apakah kamu salah tulis ribuan (misal 8000 bukan 8.000.000).")
+st.markdown("""
+Keterangan:
+- **D**: Permintaan tahunan (unit per tahun)  
+- **S**: Biaya pemesanan per order (Rp)  
+- **H**: Biaya penyimpanan per unit per tahun (Rp)
 
-# Tombol hitung
+Aplikasi ini akan menghitung EOQ berdasarkan input Anda dan menampilkan grafik serta memungkinkan ekspor hasil.
+""")
+
+# Input pengguna
+st.subheader("📝 Input Parameter")
+D = st.slider("Permintaan Tahunan (D)", min_value=100, max_value=10000, value=1000, step=100)
+S = st.slider("Biaya Pemesanan per Order (S)", min_value=1000, max_value=100000, value=50000, step=1000)
+H = st.slider("Biaya Penyimpanan per Unit per Tahun (H)", min_value=100, max_value=10000, value=2000, step=100)
+
+# Tombol hitung EOQ
 if st.button("🔍 Hitung EOQ"):
     EOQ = sqrt((2 * D * S) / H)
-    st.success(f"✅ EOQ yang dihitung: {EOQ:.2f} unit")
+    st.success(f"EOQ Optimal: {EOQ:.2f} unit")
 
-    # Simulasi Q
+    # Buat range Q dan hitung biaya
     Q = np.linspace(1, 2 * EOQ, 500)
     biaya_pemesanan = (D / Q) * S
     biaya_penyimpanan = (Q / 2) * H
     total_cost = biaya_pemesanan + biaya_penyimpanan
 
-    # Cek nilai minimum
-    min_index = np.argmin(total_cost)
-    optimal_Q = Q[min_index]
-    optimal_cost = total_cost[min_index]
-    st.info(f"💡 EOQ optimal berdasarkan simulasi: {optimal_Q:.2f} unit")
-    st.info(f"💰 Total biaya minimum: Rp {optimal_cost:,.0f}")
+    # Tampilkan grafik
+    plt.figure(figsize=(8, 5))
+    plt.plot(Q, total_cost, label='Total Biaya (Rp)', color='blue')
+    plt.axvline(EOQ, color='red', linestyle='--', label=f'EOQ = {EOQ:.2f}')
+    plt.xlabel("Kuantitas Order (Q)")
+    plt.ylabel("Total Biaya (Rp)")
+    plt.title("📊 Total Biaya vs Kuantitas Order")
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+    st.pyplot(plt.gcf())
 
-    # Tabel
+    # Buat DataFrame untuk ekspor
     df = pd.DataFrame({
         'Order Quantity (Q)': Q,
         'Total Cost (Rp)': total_cost,
@@ -51,18 +70,13 @@ if st.button("🔍 Hitung EOQ"):
         'Biaya Penyimpanan (Rp)': biaya_penyimpanan
     })
 
-    st.dataframe(df.head(10))  # tampilkan 10 data awal untuk cek logika
-
-    # Grafik
-    fig, ax = plt.subplots()
-    ax.plot(Q, total_cost, label='Total Biaya')
-    ax.axvline(optimal_Q, color='red', linestyle='--', label=f'EOQ Optimal = {optimal_Q:.2f}')
-    ax.set_xlabel("Order Quantity (Q)")
-    ax.set_ylabel("Total Cost (Rp)")
-    ax.set_title("Grafik Total Biaya vs Order Quantity")
-    ax.legend()
-    st.pyplot(fig)
-
-    # Export ke CSV
+    # Export ke CSV dengan separator titik koma (Excel-friendly)
     csv = df.to_csv(index=False, sep=';').encode('utf-8')
-    st.download_button("⬇️ Download CSV", data=csv, file_name="hasil_eoq_debug.csv", mime="text/csv")
+    st.download_button(
+        label="⬇️ Download Hasil dalam CSV (Excel Friendly)",
+        data=csv,
+        file_name='hasil_perhitungan_eoq.csv',
+        mime='text/csv'
+    )
+
+    st.info(f"Semakin dekat kuantitas ke {EOQ:.2f}, semakin optimal total biaya persediaan.")
